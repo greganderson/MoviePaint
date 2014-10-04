@@ -14,6 +14,7 @@ public class PaintActivity extends Activity {
 
 	private PaintAreaView mPaintArea;
 	static final int PICK_COLOR_REQUEST = 1;
+	private Button mColorChangeButton;
 
 	private int[] mListOfColors = {
 			Color.BLACK,
@@ -37,9 +38,9 @@ public class PaintActivity extends Activity {
 
 	    LinearLayout controls = new LinearLayout(this);
 	    controls.setOrientation(LinearLayout.HORIZONTAL);
-	    Button colorChangeButton = new Button(this);
-	    colorChangeButton.setText("Change!");
-	    colorChangeButton.setOnClickListener(new View.OnClickListener() {
+	    mColorChangeButton = new Button(this);
+	    mColorChangeButton.setBackgroundColor(mPaintArea.getColor());
+	    mColorChangeButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
 			    Intent paletteIntent = new Intent();
@@ -49,7 +50,7 @@ public class PaintActivity extends Activity {
 			    startActivityForResult(paletteIntent, PICK_COLOR_REQUEST);
 		    }
 	    });
-	    controls.addView(colorChangeButton);
+	    controls.addView(mColorChangeButton);
 
 		rootLayout.addView(mPaintArea, new LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
@@ -63,6 +64,7 @@ public class PaintActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		int color = data.getIntExtra(PaletteActivity.SELECTED_COLOR, Color.BLACK);
 		mPaintArea.setColor(color);
+		mColorChangeButton.setBackgroundColor(color);
 		mListOfColors = data.getIntArrayExtra(PaletteActivity.LIST_OF_COLORS);
 	}
 }
