@@ -1,22 +1,28 @@
 package com.familybiz.greg.moviepaint;
 
 import android.app.Activity;
-import android.graphics.Canvas;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 
-public class PaintActivity extends Activity implements PaletteView.OnColorChangedListener {
+public class PaintActivity extends Activity {
 
 	private PaintAreaView mPaintArea;
+	static final int PICK_COLOR_REQUEST = 1;
+
+	private int[] mListOfColors = {
+			Color.BLACK,
+			Color.WHITE,
+			Color.RED,
+			Color.YELLOW,
+			Color.BLUE,
+			Color.GREEN
+	};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,67 +33,36 @@ public class PaintActivity extends Activity implements PaletteView.OnColorChange
 
 		mPaintArea = new PaintAreaView(this);
 
-        final PaletteView palette = new PaletteView(this);
-		//palette.setId(10);
-		mPaintArea.setColor(palette.getCurrentSelectedColor());
+		mPaintArea.setColor(Color.RED);
 
-		palette.setOnColorChangedListener(this);
-		palette.setBackground(new Drawable() {
-			@Override
-			public void draw(Canvas canvas) {
-				RectF rect = new RectF();
-				rect.left = palette.getPaddingLeft();
-				rect.top = palette.getPaddingTop();
-				rect.right = palette.getWidth() - palette.getPaddingRight();
-				rect.bottom = palette.getHeight() - palette.getPaddingBottom();
-
-				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-				paint.setColor(Color.rgb(244, 164, 96));
-				float radiusX = rect.width() / 2;
-				float radiusY = rect.height() / 2;
-				int pointCount = 500;
-				Path path = new Path();
-				for (int pointIndex = 0; pointIndex < pointCount; pointIndex += 3) {
-					PointF point = new PointF();
-					point.x = rect.centerX() + radiusX *
-							(float) Math.cos(((double) pointIndex / (double) pointCount) * 2.0 * Math.PI);
-					point.y = rect.centerY() + radiusY *
-							(float) Math.sin(((double) pointIndex / (double) pointCount) * 2.0 * Math.PI);
-
-					if (pointIndex == 0)
-						path.moveTo(point.x, point.y);
-					else
-						path.lineTo(point.x, point.y);
-				}
-
-				canvas.drawPath(path, paint);
-			}
-
-			@Override
-			public void setAlpha(int i) {
-
-			}
-
-			@Override
-			public void setColorFilter(ColorFilter colorFilter) {
-
-			}
-
-			@Override
-			public int getOpacity() {
-				return 0;
-			}
-		});
+	    LinearLayout controls = new LinearLayout(this);
+	    controls.setOrientation(LinearLayout.HORIZONTAL);
+	    Button colorChangeButton = new Button(this);
+	    colorChangeButton.setText("Change!");
+	    colorChangeButton.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View view) {
+			    Intent paletteIntent = new Intent();
+			    paletteIntent.putExtra(PaletteActivity.SELECTED_COLOR, mPaintArea.getColor());
+			    paletteIntent.putExtra(PaletteActivity.LIST_OF_COLORS, mListOfColors);
+			    paletteIntent.setClass(PaintActivity.this, PaletteActivity.class);
+			    startActivityForResult(paletteIntent, PICK_COLOR_REQUEST);
+		    }
+	    });
+	    controls.addView(colorChangeButton);
 
 		rootLayout.addView(mPaintArea, new LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
-		rootLayout.addView(palette, new LinearLayout.LayoutParams(
-				ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+	    rootLayout.addView(controls, new LinearLayout.LayoutParams(
+			    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         setContentView(rootLayout);
     }
 
 	@Override
-	public void onColorChanged(PaletteView v) {
-		mPaintArea.setColor(v.getCurrentSelectedColor());
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		int color = data.getIntExtra(PaletteActivity.SELECTED_COLOR, Color.BLACK);
+		mPaintArea.setColor(color);
+		mListOfColors = data.getIntArrayExtra(PaletteActivity.LIST_OF_COLORS);
 	}
 }

@@ -28,6 +28,10 @@ public class PaintAreaView extends View {
 		mColor = color;
 	}
 
+	public int getColor() {
+		return mColor;
+	}
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		float x = event.getX();

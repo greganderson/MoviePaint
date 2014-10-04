@@ -3,7 +3,6 @@ package com.familybiz.greg.moviepaint;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -130,20 +129,11 @@ public class PaletteView extends ViewGroup implements PaintView.OnSplotchTouchLi
 		return mOnColorChangedListener;
 	}
 
-	private final int[] startingColors = {
-			Color.BLACK,
-			Color.WHITE,
-			Color.RED,
-			Color.YELLOW,
-			Color.BLUE,
-			Color.GREEN
-	};
-
 	public static ArrayList<PaintView> mSplotches;
 	private HashMap<PaintView, PointF> mStartingPoints;
 	private int mCurrentSelectedColor;
 
-    public PaletteView(Context context) {
+    public PaletteView(Context context, int[] startingColors) {
 		super(context);
 
 		mSplotches = new ArrayList<PaintView>();
@@ -165,7 +155,9 @@ public class PaletteView extends ViewGroup implements PaintView.OnSplotchTouchLi
 		}
 	}
 
-	private void setCurrentSelectedColor(int color) {
+	public void setCurrentSelectedColor(int color) {
+		for (PaintView splotch : mSplotches)
+			splotch.setActive(splotch.getColor() == color);
 		mCurrentSelectedColor = color;
 	}
 
@@ -272,5 +264,12 @@ public class PaletteView extends ViewGroup implements PaintView.OnSplotchTouchLi
 		double rX = Math.pow(getWidth() / 2, 2);
 		double rY = Math.pow(getHeight() / 2, 2);
 		return topX / rX + topY / rY <= 1;
+	}
+
+	public int[] getListOfColors() {
+		int[] colors = new int[mSplotches.size()];
+		for (int i = 0; i < mSplotches.size(); i++)
+			colors[i] = mSplotches.get(i).getColor();
+		return colors;
 	}
 }
