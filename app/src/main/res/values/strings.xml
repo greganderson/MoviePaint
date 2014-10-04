@@ -3,6 +3,7 @@
 
     <string name="app_name">Movie Paint</string>
     <string name="palette_activity_name">Palette</string>
+    <string name="movie_activity_name">Watch you paint!</string>
     <string name="action_settings">Settings</string>
 
 </resources>

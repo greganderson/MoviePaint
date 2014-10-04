@@ -20,6 +20,10 @@
             android:name=".PaletteActivity"
             android:label="@string/palette_activity_name" >
         </activity>
+        <activity
+            android:name=".MovieActivity"
+            android:label="@string/movie_activity_name" >
+        </activity>
     </application>
 
 </manifest>
