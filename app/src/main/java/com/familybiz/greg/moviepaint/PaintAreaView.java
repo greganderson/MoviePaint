@@ -85,6 +85,36 @@ public class PaintAreaView extends View {
 		}
 	}
 
+	public ArrayList<PaintPoint> getPointList() {
+		ArrayList<PaintPoint> result = new ArrayList<PaintPoint>();
+		for (LineColorPair line : mPointList) {
+			PointF[] points = line.getPoints();
+			int color = line.getColor();
+			for (PointF point : points)
+				result.add(new PaintPoint(point, color));
+		}
+
+		return result;
+	}
+
+	public void setPointList(ArrayList<PaintPoint> points) {
+		mPointList.clear();
+
+		ArrayList<PointF> temp = new ArrayList<PointF>();
+		int color = points.get(0).color;
+		for (PaintPoint point : points) {
+			if (point.color != color) {
+				mPointList.add(new LineColorPair(temp.toArray(new PointF[temp.size()]), color));
+				temp.clear();
+			}
+			temp.add(new PointF(point.x, point.y));
+			color = point.color;
+		}
+		mPointList.add(new LineColorPair(temp.toArray(new PointF[temp.size()]), color));
+
+		invalidate();
+	}
+
 	/**
 	 * Represents the points of a users dragging across the screen as well as
 	 * the color that they were.

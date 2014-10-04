@@ -14,6 +14,7 @@ public class PaintActivity extends Activity {
 
 	private PaintAreaView mPaintArea;
 	static final int PICK_COLOR_REQUEST = 1;
+	static final int WATCH_MOVIE = 2;
 	private Button mColorChangeButton;
 
 	private int[] mListOfColors = {
@@ -50,7 +51,21 @@ public class PaintActivity extends Activity {
 			    startActivityForResult(paletteIntent, PICK_COLOR_REQUEST);
 		    }
 	    });
+
+	    Button watchButton = new Button(this);
+	    watchButton.setText("Watch!");
+	    watchButton.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View view) {
+			    Intent movieIntent = new Intent();
+			    movieIntent.putParcelableArrayListExtra(MovieActivity.POINT_LIST, mPaintArea.getPointList());
+			    movieIntent.setClass(PaintActivity.this, MovieActivity.class);
+			    startActivityForResult(movieIntent, WATCH_MOVIE);
+		    }
+	    });
+
 	    controls.addView(mColorChangeButton);
+	    controls.addView(watchButton);
 
 		rootLayout.addView(mPaintArea, new LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));

@@ -1,23 +1,31 @@
 package com.familybiz.greg.moviepaint;
 
 import android.app.Activity;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import java.util.ArrayList;
+
 
 public class MovieActivity extends Activity {
+
+	static final String MOVIE_POSITION = "movie_position";
+	static final String POINT_LIST = "point_list";
 
 	ImageButton mPlayPause;
 	boolean mPlay;
 	ImageButton mStop;
 	SeekBar mScrubber;
+	PaintAreaView mPaintArea;
+	ArrayList<PaintPoint> points;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,20 +33,35 @@ public class MovieActivity extends Activity {
 	    LinearLayout rootLayout = new LinearLayout(this);
 	    rootLayout.setOrientation(LinearLayout.VERTICAL);
 
+	    Bundle intent = getIntent().getExtras();
+	    if (intent != null)
+		    points = intent.getParcelableArrayList(POINT_LIST);
+
 
 	    // Paint view
 
-	    PaintAreaView paintArea = new PaintAreaView(this);
-	    paintArea.setBackgroundColor(Color.RED);
+	    mPaintArea = new PaintAreaView(this);
+	    mPaintArea.setPointList(points);
 
 	    // Player
 
 	    LinearLayout player = new LinearLayout(this);
-	    player.setBackgroundColor(Color.BLUE);
 	    player.setOrientation(LinearLayout.HORIZONTAL);
 	    LinearLayout.LayoutParams playerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 	    playerParams.gravity = Gravity.CENTER_VERTICAL;
 	    player.setLayoutParams(playerParams);
+
+	    Button paintButton = new Button(this);
+	    paintButton.setBackgroundColor(mPaintArea.getColor());
+	    paintButton.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View view) {
+			    Intent resultIntent = new Intent();
+			    //resultIntent.putExtra(MOVIE_POSITION, );
+			    setResult(Activity.RESULT_OK, resultIntent);
+			    finish();
+		    }
+	    });
 
 	    mPlayPause = new ImageButton(this);
 	    mPlay = true;
@@ -72,12 +95,13 @@ public class MovieActivity extends Activity {
 		    }
 	    });
 
+	    player.addView(paintButton, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 	    player.addView(mPlayPause, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 	    player.addView(mStop, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 	    player.addView(mScrubber, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
 
 
-	    rootLayout.addView(paintArea, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+	    rootLayout.addView(mPaintArea, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
 	    rootLayout.addView(player, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         setContentView(rootLayout);
