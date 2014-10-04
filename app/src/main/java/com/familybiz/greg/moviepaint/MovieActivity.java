@@ -1,9 +1,10 @@
 package com.familybiz.greg.moviepaint;
 
-import android.app.ActionBar;
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -22,12 +23,22 @@ public class MovieActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	    LinearLayout rootLayout = new LinearLayout(this);
-	    rootLayout.setOrientation(LinearLayout.HORIZONTAL);
+	    rootLayout.setOrientation(LinearLayout.VERTICAL);
+
+
+	    // Paint view
+
+	    PaintAreaView paintArea = new PaintAreaView(this);
+	    paintArea.setBackgroundColor(Color.RED);
+
+	    // Player
 
 	    LinearLayout player = new LinearLayout(this);
+	    player.setBackgroundColor(Color.BLUE);
 	    player.setOrientation(LinearLayout.HORIZONTAL);
-	    LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, )
-	    player.setLayoutParams(params);
+	    LinearLayout.LayoutParams playerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+	    playerParams.gravity = Gravity.CENTER_VERTICAL;
+	    player.setLayoutParams(playerParams);
 
 	    mPlayPause = new ImageButton(this);
 	    mPlay = true;
@@ -36,10 +47,7 @@ public class MovieActivity extends Activity {
 		    @Override
 		    public void onClick(View view) {
 			    mPlay = !mPlay;
-			    if (mPlay)
-				    mPlayPause.setImageResource(R.drawable.ic_action_play);
-			    else
-				    mPlayPause.setImageResource(R.drawable.ic_action_pause);
+				mPlayPause.setImageResource(mPlay ? R.drawable.ic_action_play : R.drawable.ic_action_pause);
 		    }
 	    });
 
@@ -64,14 +72,14 @@ public class MovieActivity extends Activity {
 		    }
 	    });
 
-	    player.addView(mPlayPause, new ActionBar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-	    player.addView(mStop, new ActionBar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-	    player.addView(mScrubber, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+	    player.addView(mPlayPause, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+	    player.addView(mStop, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+	    player.addView(mScrubber, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
 
-	    rootLayout.addView(player, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+	    rootLayout.addView(paintArea, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+	    rootLayout.addView(player, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         setContentView(rootLayout);
     }
-
-
 }
