@@ -3,7 +3,6 @@ package com.familybiz.greg.moviepaint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,7 @@ public class MovieActivity extends Activity {
 	boolean mPlay;
 	ImageButton mStop;
 	SeekBar mScrubber;
-	PaintAreaView mPaintArea;
+	MoviePaintAreaView mMoviePaintArea;
 	ArrayList<PaintPoint> points;
 
     @Override
@@ -40,8 +39,7 @@ public class MovieActivity extends Activity {
 
 	    // Paint view
 
-	    mPaintArea = new PaintAreaView(this);
-	    mPaintArea.setPointList(points);
+	    mMoviePaintArea = new MoviePaintAreaView(this, points);
 
 	    // Player
 
@@ -52,7 +50,6 @@ public class MovieActivity extends Activity {
 	    player.setLayoutParams(playerParams);
 
 	    Button paintButton = new Button(this);
-	    paintButton.setBackgroundColor(mPaintArea.getColor());
 	    paintButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
@@ -78,10 +75,11 @@ public class MovieActivity extends Activity {
 	    mStop.setImageResource(R.drawable.ic_action_stop);
 
 	    mScrubber = new SeekBar(this);
+	    mScrubber.setMax(points.size());
 	    mScrubber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 		    @Override
-		    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-			    Log.i("SEEKER", "Value: " + i);
+		    public void onProgressChanged(SeekBar seekBar, int value, boolean b) {
+			    mMoviePaintArea.setPointPosition(value);
 		    }
 
 		    @Override
@@ -101,7 +99,7 @@ public class MovieActivity extends Activity {
 	    player.addView(mScrubber, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
 
 
-	    rootLayout.addView(mPaintArea, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+	    rootLayout.addView(mMoviePaintArea, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
 	    rootLayout.addView(player, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         setContentView(rootLayout);
