@@ -9,13 +9,31 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
 
 public class PaintActivity extends Activity {
 
 	private PaintAreaView mPaintArea;
 	static final int PICK_COLOR_REQUEST = 1;
 	static final int WATCH_MOVIE = 2;
+	static final String SAVED_COLOR_LIST = "saved_color_list";
+	static final String SAVED_POINTS_LIST = "saved_points_list";
 	private Button mColorChangeButton;
+	private String filename = "data.txt";
 
 	private int[] mListOfColors = {
 			Color.BLACK,
@@ -81,5 +99,64 @@ public class PaintActivity extends Activity {
 		mPaintArea.setColor(color);
 		mColorChangeButton.setBackgroundColor(color);
 		mListOfColors = data.getIntArrayExtra(PaletteActivity.LIST_OF_COLORS);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		try {
+			File file = new File(getFilesDir(), filename);
+			FileReader reader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(reader);
+			String content = "";
+			String input = "";
+			while ((input = bufferedReader.readLine()) != null)
+				content += input;
+
+			Gson gson = new Gson();
+
+			JsonParser parser = new JsonParser();
+			JsonObject data = parser.parse(content).getAsJsonObject();
+			Type colorListType = new TypeToken<int[]>(){}.getType();
+			mListOfColors = gson.fromJson(data.get(SAVED_COLOR_LIST), colorListType);
+
+			Type pointListType = new TypeToken<ArrayList<PaintPoint>>(){}.getType();
+			ArrayList<PaintPoint> points = gson.fromJson(data.get(SAVED_POINTS_LIST), pointListType);
+			mPaintArea.setPointList(points);
+
+			bufferedReader.close();
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		try {
+			Gson gson = new Gson();
+
+			String jsonPointList = gson.toJson(mPaintArea.getPointList());
+			String jsonColorList = gson.toJson(mListOfColors);
+
+			String result = "{\"" + SAVED_COLOR_LIST + "\":" + jsonColorList + ", \"" + SAVED_POINTS_LIST + "\":" + jsonPointList + "}";
+
+			File file = new File(getFilesDir(), filename);
+			FileWriter writer = new FileWriter(file);
+			BufferedWriter bufferedWriter = new BufferedWriter(writer);
+
+			bufferedWriter.write(result);
+
+			bufferedWriter.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

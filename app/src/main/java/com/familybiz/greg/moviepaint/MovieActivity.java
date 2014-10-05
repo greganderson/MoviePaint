@@ -24,7 +24,8 @@ public class MovieActivity extends Activity {
 	ImageButton mStop;
 	SeekBar mScrubber;
 	MoviePaintAreaView mMoviePaintArea;
-	ArrayList<PaintPoint> points;
+	ArrayList<PaintPoint> mPoints;
+	int mCurrentPoint = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +35,12 @@ public class MovieActivity extends Activity {
 
 	    Bundle intent = getIntent().getExtras();
 	    if (intent != null)
-		    points = intent.getParcelableArrayList(POINT_LIST);
+		    mPoints = intent.getParcelableArrayList(POINT_LIST);
 
 
 	    // Paint view
 
-	    mMoviePaintArea = new MoviePaintAreaView(this, points);
+	    mMoviePaintArea = new MoviePaintAreaView(this, mPoints);
 
 	    // Player
 
@@ -61,7 +62,7 @@ public class MovieActivity extends Activity {
 	    });
 
 	    mPlayPause = new ImageButton(this);
-	    mPlay = true;
+	    mPlay = false;
 	    mPlayPause.setImageResource(R.drawable.ic_action_play);
 	    mPlayPause.setOnClickListener(new View.OnClickListener() {
 		    @Override
@@ -75,7 +76,7 @@ public class MovieActivity extends Activity {
 	    mStop.setImageResource(R.drawable.ic_action_stop);
 
 	    mScrubber = new SeekBar(this);
-	    mScrubber.setMax(points.size());
+	    mScrubber.setMax(mPoints.size());
 	    mScrubber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 		    @Override
 		    public void onProgressChanged(SeekBar seekBar, int value, boolean b) {
@@ -104,4 +105,20 @@ public class MovieActivity extends Activity {
 
         setContentView(rootLayout);
     }
+
+	private void play() {
+		while (mCurrentPoint < mPoints.size()) {
+			mMoviePaintArea.setPointPosition(mCurrentPoint);
+			mCurrentPoint++;
+		}
+	}
+
+	private void pause() {
+		//
+	}
+
+	private void stop() {
+		mCurrentPoint = 0;
+		mMoviePaintArea.setPointPosition(mCurrentPoint);
+	}
 }
