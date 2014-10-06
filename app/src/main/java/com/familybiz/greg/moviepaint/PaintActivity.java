@@ -31,7 +31,6 @@ public class PaintActivity extends Activity {
 	private PaintAreaView mPaintArea;
 	static final int PICK_COLOR_REQUEST = 1;
 	static final int WATCH_MOVIE = 2;
-	static final String SAVED_COLOR_LIST = "saved_color_list";
 	static final String SAVED_POINTS_LIST = "saved_points_list";
 	private Button mColorChangeButton;
 	private String filename = "data.txt";
@@ -133,12 +132,39 @@ public class PaintActivity extends Activity {
 
 			JsonParser parser = new JsonParser();
 			JsonObject data = parser.parse(content).getAsJsonObject();
-			Type colorListType = new TypeToken<int[]>(){}.getType();
-			mListOfColors = gson.fromJson(data.get(SAVED_COLOR_LIST), colorListType);
+
+			loadColorList();
 
 			Type pointListType = new TypeToken<ArrayList<PaintPoint>>(){}.getType();
 			ArrayList<PaintPoint> points = gson.fromJson(data.get(SAVED_POINTS_LIST), pointListType);
 			mPaintArea.setPointList(points);
+
+			bufferedReader.close();
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void loadColorList() {
+		try {
+			File file = new File(getFilesDir(), PaletteActivity.COLOR_LIST_FILENAME);
+			FileReader reader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(reader);
+			String content = "";
+			String input = "";
+			while ((input = bufferedReader.readLine()) != null)
+				content += input;
+
+			Gson gson = new Gson();
+
+			JsonParser parser = new JsonParser();
+			JsonObject data = parser.parse(content).getAsJsonObject();
+			Type colorListType = new TypeToken<int[]>(){}.getType();
+			mListOfColors = gson.fromJson(data.get(PaletteActivity.SAVED_COLOR_LIST), colorListType);
 
 			bufferedReader.close();
 		}
@@ -162,9 +188,8 @@ public class PaintActivity extends Activity {
 			Gson gson = new Gson();
 
 			String jsonPointList = gson.toJson(mPaintArea.getPointList());
-			String jsonColorList = gson.toJson(mListOfColors);
 
-			String result = "{\"" + SAVED_COLOR_LIST + "\":" + jsonColorList + ", \"" + SAVED_POINTS_LIST + "\":" + jsonPointList + "}";
+			String result = "{\"" + SAVED_POINTS_LIST + "\":" + jsonPointList + "}";
 
 			File file = new File(getFilesDir(), filename);
 			FileWriter writer = new FileWriter(file);

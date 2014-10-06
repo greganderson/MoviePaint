@@ -102,6 +102,8 @@ public class PaintAreaView extends View {
 		mPointList.clear();
 
 		ArrayList<PointF> temp = new ArrayList<PointF>();
+		if (points.size() == 0)
+			return;
 		int color = points.get(0).color;
 		for (PaintPoint point : points) {
 			if (point.color != color) {
