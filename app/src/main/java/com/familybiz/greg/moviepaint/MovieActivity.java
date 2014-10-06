@@ -12,15 +12,23 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import java.util.ArrayList;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 
 public class MovieActivity extends Activity {
 
 	static final String MOVIE_POSITION = "movie_position";
 	static final String POINT_LIST = "point_list";
+	private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
+	private ScheduledFuture<?> mMovieThread;
 
 	ImageButton mPlayPause;
 	boolean mPlay;
+	boolean mPause;
 	ImageButton mStop;
 	SeekBar mScrubber;
 	MoviePaintAreaView mMoviePaintArea;
@@ -51,11 +59,11 @@ public class MovieActivity extends Activity {
 	    player.setLayoutParams(playerParams);
 
 	    Button paintButton = new Button(this);
+	    paintButton.setText("Paint!");
 	    paintButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
 			    Intent resultIntent = new Intent();
-			    //resultIntent.putExtra(MOVIE_POSITION, );
 			    setResult(Activity.RESULT_OK, resultIntent);
 			    finish();
 		    }
@@ -63,17 +71,36 @@ public class MovieActivity extends Activity {
 
 	    mPlayPause = new ImageButton(this);
 	    mPlay = false;
+	    mPlay = false;
 	    mPlayPause.setImageResource(R.drawable.ic_action_play);
 	    mPlayPause.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
-			    mPlay = !mPlay;
-				mPlayPause.setImageResource(mPlay ? R.drawable.ic_action_play : R.drawable.ic_action_pause);
+			    if (mPlay) {
+				    mPlay = false;
+				    mPause = true;
+			    }
+			    else {
+				    mPlay = true;
+				    mPause = false;
+			    }
+			    setPlayPauseButton();
+			    play();
 		    }
 	    });
 
 	    mStop = new ImageButton(this);
 	    mStop.setImageResource(R.drawable.ic_action_stop);
+	    mStop.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View view) {
+				mPlay = false;
+			    mPause = false;
+			    mCurrentPoint = 0;
+			    mScrubber.setProgress(0);
+			    setPlayPauseButton();
+		    }
+	    });
 
 	    mScrubber = new SeekBar(this);
 	    mScrubber.setMax(mPoints.size());
@@ -106,19 +133,40 @@ public class MovieActivity extends Activity {
         setContentView(rootLayout);
     }
 
+	private void setPlayPauseButton() {
+		mPlayPause.setImageResource(mPlay ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
+	}
+
 	private void play() {
-		while (mCurrentPoint < mPoints.size()) {
-			mMoviePaintArea.setPointPosition(mCurrentPoint);
-			mCurrentPoint++;
+		Runnable task = new Runnable() {
+			@Override
+			public void run() {
+				while (mCurrentPoint < mPoints.size()) {
+					if (!mPlay) {
+						if (!mPause)
+							mScrubber.setProgress(0);
+						break;
+					}
+					mScrubber.incrementProgressBy(1);
+					mCurrentPoint++;
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				mMovieThread.cancel(true);
+			}
+		};
+		 mMovieThread = worker.schedule(task, 0, TimeUnit.SECONDS);
+	}
+
+	private class Player extends TimerTask {
+
+		@Override
+		public void run() {
+			if (mCurrentPoint < mPoints.size())
+				mMoviePaintArea.setPointPosition(mCurrentPoint++);
 		}
-	}
-
-	private void pause() {
-		//
-	}
-
-	private void stop() {
-		mCurrentPoint = 0;
-		mMoviePaintArea.setPointPosition(mCurrentPoint);
 	}
 }
