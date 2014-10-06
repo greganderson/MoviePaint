@@ -92,6 +92,7 @@ public class PaintAreaView extends View {
 			int color = line.getColor();
 			for (PointF point : points)
 				result.add(new PaintPoint(point, color));
+			result.add(new PaintPoint(new PointF(0, 0), Color.TRANSPARENT));
 		}
 
 		return result;
