@@ -61,6 +61,10 @@ public class PaintActivity extends Activity {
 	    LinearLayout controls = new LinearLayout(this);
 	    controls.setOrientation(LinearLayout.HORIZONTAL);
 	    mColorChangeButton = new Button(this);
+	    LinearLayout.LayoutParams colorChangeButtonParams = new LinearLayout.LayoutParams(
+			    ViewGroup.LayoutParams.WRAP_CONTENT,
+			    ViewGroup.LayoutParams.WRAP_CONTENT);
+	    colorChangeButtonParams.setMargins(5, 5, 5, 5);
 	    mColorChangeButton.setBackgroundColor(mPaintArea.getColor());
 	    mColorChangeButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
@@ -85,7 +89,7 @@ public class PaintActivity extends Activity {
 		    }
 	    });
 
-	    controls.addView(mColorChangeButton);
+	    controls.addView(mColorChangeButton, colorChangeButtonParams);
 	    controls.addView(watchButton);
 
 		rootLayout.addView(mPaintArea, new LinearLayout.LayoutParams(
