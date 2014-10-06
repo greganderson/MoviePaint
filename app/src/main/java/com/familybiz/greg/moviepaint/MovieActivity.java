@@ -148,6 +148,7 @@ public class MovieActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		mPlay = false;
+		setPlayPauseButton();
 		saveSpotInMovie();
 	}
 
