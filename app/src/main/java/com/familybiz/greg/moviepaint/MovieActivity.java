@@ -147,6 +147,7 @@ public class MovieActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mPlay = false;
 		saveSpotInMovie();
 	}
 
