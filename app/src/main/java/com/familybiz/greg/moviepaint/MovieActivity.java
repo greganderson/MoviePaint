@@ -11,6 +11,19 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -22,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class MovieActivity extends Activity {
 
 	static final String MOVIE_POSITION = "movie_position";
+	static final String SAVED_MOVIE_POSITION_FILENAME = "movie_position.txt";
 	static final String POINT_LIST = "point_list";
 	private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
 	private ScheduledFuture<?> mMovieThread;
@@ -127,8 +141,20 @@ public class MovieActivity extends Activity {
 	    rootLayout.addView(mMoviePaintArea, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
 	    rootLayout.addView(player, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        setContentView(rootLayout);
-    }
+	    setContentView(rootLayout);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		saveSpotInMovie();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		loadSpotInMovie();
+	}
 
 	private void setPlayPauseButton() {
 		mPlayPause.setImageResource(mPlay ? R.drawable.ic_action_pause : R.drawable.ic_action_play);
@@ -164,6 +190,56 @@ public class MovieActivity extends Activity {
 		mCurrentPoint = 0;
 		mScrubber.setProgress(0);
 		setPlayPauseButton();
+		saveSpotInMovie();
+	}
+
+	private void saveSpotInMovie() {
+		try {
+			Gson gson = new Gson();
+
+			String jsonSpotInMovie = gson.toJson(mScrubber.getProgress());
+
+			String result = "{\"" + MOVIE_POSITION + "\":" + jsonSpotInMovie + "}";
+
+			File file = new File(getFilesDir(), SAVED_MOVIE_POSITION_FILENAME);
+			FileWriter writer = new FileWriter(file);
+			BufferedWriter bufferedWriter = new BufferedWriter(writer);
+
+			bufferedWriter.write(result);
+
+			bufferedWriter.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void loadSpotInMovie() {
+		try {
+			File file = new File(getFilesDir(), SAVED_MOVIE_POSITION_FILENAME);
+			FileReader reader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(reader);
+			String content = "";
+			String input = "";
+			while ((input = bufferedReader.readLine()) != null)
+				content += input;
+
+			Gson gson = new Gson();
+
+			JsonParser parser = new JsonParser();
+			JsonObject data = parser.parse(content).getAsJsonObject();
+			Type moviePositionType = new TypeToken<Integer>(){}.getType();
+			int progress = gson.fromJson(data.get(MOVIE_POSITION), moviePositionType);
+			mScrubber.setProgress(progress);
+
+			bufferedReader.close();
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private class Player extends TimerTask {
