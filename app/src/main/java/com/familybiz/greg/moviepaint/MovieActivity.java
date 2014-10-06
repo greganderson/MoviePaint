@@ -63,6 +63,7 @@ public class MovieActivity extends Activity {
 	    paintButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
+			    stop();
 			    Intent resultIntent = new Intent();
 			    setResult(Activity.RESULT_OK, resultIntent);
 			    finish();
@@ -94,11 +95,7 @@ public class MovieActivity extends Activity {
 	    mStop.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
-				mPlay = false;
-			    mPause = false;
-			    mCurrentPoint = 0;
-			    mScrubber.setProgress(0);
-			    setPlayPauseButton();
+			    stop();
 		    }
 	    });
 
@@ -159,6 +156,14 @@ public class MovieActivity extends Activity {
 			}
 		};
 		 mMovieThread = worker.schedule(task, 0, TimeUnit.SECONDS);
+	}
+
+	private void stop() {
+		mPlay = false;
+		mPause = false;
+		mCurrentPoint = 0;
+		mScrubber.setProgress(0);
+		setPlayPauseButton();
 	}
 
 	private class Player extends TimerTask {
