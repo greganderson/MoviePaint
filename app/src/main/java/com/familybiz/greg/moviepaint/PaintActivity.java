@@ -35,14 +35,7 @@ public class PaintActivity extends Activity {
 	private Button mColorChangeButton;
 	private String filename = "data.txt";
 
-	private int[] mListOfColors = {
-			Color.BLACK,
-			Color.WHITE,
-			Color.RED,
-			Color.YELLOW,
-			Color.BLUE,
-			Color.GREEN
-	};
+	private int[] mListOfColors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +43,16 @@ public class PaintActivity extends Activity {
 
 		LinearLayout rootLayout = new LinearLayout(this);
 		rootLayout.setOrientation(LinearLayout.VERTICAL);
+	    if (mListOfColors == null || mListOfColors.length == 0) {
+			mListOfColors = new int[]{
+					Color.BLACK,
+					Color.WHITE,
+					Color.RED,
+					Color.YELLOW,
+					Color.BLUE,
+					Color.GREEN
+			};
+	    }
 
 		mPaintArea = new PaintAreaView(this);
 
@@ -95,10 +98,13 @@ public class PaintActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		int color = data.getIntExtra(PaletteActivity.SELECTED_COLOR, Color.BLACK);
-		mPaintArea.setColor(color);
-		mColorChangeButton.setBackgroundColor(color);
-		mListOfColors = data.getIntArrayExtra(PaletteActivity.LIST_OF_COLORS);
+		if (requestCode == PICK_COLOR_REQUEST) {
+			int color = data.getIntExtra(PaletteActivity.SELECTED_COLOR, Color.BLACK);
+			mPaintArea.setColor(color);
+			mColorChangeButton.setBackgroundColor(color);
+			mListOfColors = data.getIntArrayExtra(PaletteActivity.LIST_OF_COLORS);
+		}
+		saveData();
 	}
 
 	@Override
@@ -139,6 +145,10 @@ public class PaintActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 
+		saveData();
+	}
+
+	private void saveData() {
 		try {
 			Gson gson = new Gson();
 
