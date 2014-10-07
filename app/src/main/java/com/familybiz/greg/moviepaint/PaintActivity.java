@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
@@ -60,10 +61,11 @@ public class PaintActivity extends Activity {
 
 	    LinearLayout controls = new LinearLayout(this);
 	    controls.setOrientation(LinearLayout.HORIZONTAL);
+
 	    mColorChangeButton = new Button(this);
 	    LinearLayout.LayoutParams colorChangeButtonParams = new LinearLayout.LayoutParams(
 			    ViewGroup.LayoutParams.WRAP_CONTENT,
-			    ViewGroup.LayoutParams.WRAP_CONTENT);
+			    ViewGroup.LayoutParams.MATCH_PARENT);
 	    colorChangeButtonParams.setMargins(5, 5, 5, 5);
 	    mColorChangeButton.setBackgroundColor(mPaintArea.getColor());
 	    mColorChangeButton.setOnClickListener(new View.OnClickListener() {
@@ -77,8 +79,12 @@ public class PaintActivity extends Activity {
 		    }
 	    });
 
-	    Button watchButton = new Button(this);
-	    watchButton.setText("Watch!");
+	    ImageButton watchButton = new ImageButton(this);
+	    watchButton.setImageResource(R.drawable.ic_action_video);
+	    LinearLayout.LayoutParams watchButtonParams = new LinearLayout.LayoutParams(
+			    ViewGroup.LayoutParams.WRAP_CONTENT,
+			    ViewGroup.LayoutParams.WRAP_CONTENT);
+	    //watchButtonParams.setMargins(5, 5, 5, 5);
 	    watchButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
@@ -90,7 +96,7 @@ public class PaintActivity extends Activity {
 	    });
 
 	    controls.addView(mColorChangeButton, colorChangeButtonParams);
-	    controls.addView(watchButton);
+	    controls.addView(watchButton, watchButtonParams);
 
 		rootLayout.addView(mPaintArea, new LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));

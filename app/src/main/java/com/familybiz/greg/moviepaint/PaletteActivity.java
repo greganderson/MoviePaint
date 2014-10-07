@@ -39,7 +39,6 @@ public class PaletteActivity extends Activity {
 
 		final PaletteView palette = new PaletteView(this, colors);
 		palette.setCurrentSelectedColor(selectedColor);
-		//palette.setId(10);
 
 		LinearLayout controls = new LinearLayout(this);
 		Button returnButton = new Button(this);
