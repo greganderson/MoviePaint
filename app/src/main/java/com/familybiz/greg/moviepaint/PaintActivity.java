@@ -84,7 +84,6 @@ public class PaintActivity extends Activity {
 	    LinearLayout.LayoutParams watchButtonParams = new LinearLayout.LayoutParams(
 			    ViewGroup.LayoutParams.WRAP_CONTENT,
 			    ViewGroup.LayoutParams.WRAP_CONTENT);
-	    //watchButtonParams.setMargins(5, 5, 5, 5);
 	    watchButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
