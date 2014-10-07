@@ -44,7 +44,7 @@ public class MoviePaintAreaView extends View{
 			PaintPoint point = mPointList.get(0);
 			color = point.color;
 			polylinePaint.setColor(color);
-			polylinePath.moveTo(point.x, point.y);
+			polylinePath.moveTo(point.x * getWidth(), point.y * getHeight());
 		}
 
 		for (int i = 1; i < mPointPosition; i++) {
@@ -62,10 +62,10 @@ public class MoviePaintAreaView extends View{
 
 				// Start new path
 				polylinePath = new Path();
-				polylinePath.moveTo(point.x, point.y);
+				polylinePath.moveTo(point.x * getWidth(), point.y * getHeight());
 				continue;
 			}
-			polylinePath.lineTo(point.x, point.y);
+			polylinePath.lineTo(point.x * getWidth(), point.y * getHeight());
 		}
 
 		// Complete the line

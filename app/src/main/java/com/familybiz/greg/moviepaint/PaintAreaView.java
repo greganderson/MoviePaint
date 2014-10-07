@@ -44,7 +44,7 @@ public class PaintAreaView extends View {
 			mPoints.clear();
 		}
 		else
-			mPoints.add(new PointF(x, y));
+			mPoints.add(new PointF(x / getWidth(), y / getHeight()));
 
 		invalidate();
 		return true;
@@ -64,9 +64,9 @@ public class PaintAreaView extends View {
 				polylinePaint.setStrokeWidth(8.0f);
 				polylinePaint.setColor(color);
 				Path polylinePath = new Path();
-				polylinePath.moveTo(points[0].x, points[0].y);
+				polylinePath.moveTo(points[0].x * getWidth(), points[0].y * getHeight());
 				for (PointF point : points)
-					polylinePath.lineTo(point.x, point.y);
+					polylinePath.lineTo(point.x * getWidth(), point.y * getHeight());
 				canvas.drawPath(polylinePath, polylinePaint);
 			}
 		}
@@ -78,9 +78,9 @@ public class PaintAreaView extends View {
 			polylinePaint.setStrokeWidth(8.0f);
 			polylinePaint.setColor(mColor);
 			Path polylinePath = new Path();
-			polylinePath.moveTo(mPoints.get(0).x, mPoints.get(0).y);
+			polylinePath.moveTo(mPoints.get(0).x * getWidth(), mPoints.get(0).y * getHeight());
 			for (PointF point : mPoints)
-				polylinePath.lineTo(point.x, point.y);
+				polylinePath.lineTo(point.x * getWidth(), point.y * getHeight());
 			canvas.drawPath(polylinePath, polylinePaint);
 		}
 	}
