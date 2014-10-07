@@ -19,13 +19,18 @@ public class PaletteView extends ViewGroup implements PaintView.OnSplotchTouchLi
 
 	@Override
 	public void onSplotchTouched(PaintView v) {
-		setCurrentSelectedColor(v.getColor());
+		// Check if a new color was mixed, setting that as selected instead of touched color
+		if (mNewColor)
+			mNewColor = false;
+		else
+			setCurrentSelectedColor(v.getColor());
 		if (mOnColorChangedListener != null)
 			mOnColorChangedListener.onColorChanged(this);
 	}
 
 	private float mStartX;
 	private float mStartY;
+	private boolean mNewColor = false;
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		for (int i = 0; i < getChildCount(); i++) {
@@ -59,7 +64,9 @@ public class PaletteView extends ViewGroup implements PaintView.OnSplotchTouchLi
 							PaintView newSplotch = new PaintView(getContext());
 							int color = mixColors(splotchDroppedOn.getColor(), v.getColor());
 							newSplotch.setColor(color);
-							newSplotch.setActive(false);
+							newSplotch.setActive(true);
+							setCurrentSelectedColor(color);
+							mNewColor = true;
 							newSplotch.setOnSplotchTouchListener(this);
 							this.addView(newSplotch);
 							mSplotches.add(newSplotch);
