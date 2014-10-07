@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -32,7 +31,7 @@ public class PaintActivity extends Activity {
 	static final int PICK_COLOR_REQUEST = 1;
 	static final int WATCH_MOVIE = 2;
 	static final String SAVED_POINTS_LIST = "saved_points_list";
-	private Button mColorChangeButton;
+	private ImageButton mColorChangeButton;
 	private String filename = "data.txt";
 
 	private int[] mListOfColors;
@@ -61,7 +60,8 @@ public class PaintActivity extends Activity {
 	    LinearLayout controls = new LinearLayout(this);
 	    controls.setOrientation(LinearLayout.HORIZONTAL);
 
-	    mColorChangeButton = new Button(this);
+	    mColorChangeButton = new ImageButton(this);
+	    mColorChangeButton.setImageResource(R.drawable.paint_brush);
 	    LinearLayout.LayoutParams colorChangeButtonParams = new LinearLayout.LayoutParams(
 			    ViewGroup.LayoutParams.WRAP_CONTENT,
 			    ViewGroup.LayoutParams.MATCH_PARENT);
