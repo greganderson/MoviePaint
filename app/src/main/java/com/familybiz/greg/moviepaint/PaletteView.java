@@ -52,6 +52,7 @@ public class PaletteView extends ViewGroup implements PaintView.OnSplotchTouchLi
 						if (!inPalette(event.getX(), event.getY())) {
 							removeView(v);
 							mSplotches.remove(v);
+							setCurrentSelectedColor(mSplotches.get(0).getColor());
 							invalidate();
 							break;
 						}
