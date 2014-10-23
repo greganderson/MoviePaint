@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -93,8 +94,20 @@ public class PaintActivity extends Activity {
 		    }
 	    });
 
+	    Button clearPaintingButton = new Button(this);
+	    LinearLayout.LayoutParams clearPaintingButtonParams = new LinearLayout.LayoutParams(
+			    ViewGroup.LayoutParams.WRAP_CONTENT,
+			    ViewGroup.LayoutParams.MATCH_PARENT);
+	    clearPaintingButton.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View view) {
+			    mPaintArea.setPointList(new ArrayList<PaintPoint>());
+		    }
+	    });
+
 	    controls.addView(mColorChangeButton, colorChangeButtonParams);
 	    controls.addView(watchButton, watchButtonParams);
+	    controls.addView(clearPaintingButton, clearPaintingButtonParams);
 
 		rootLayout.addView(mPaintArea, new LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
